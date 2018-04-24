@@ -1,4 +1,4 @@
 var GAMELIFT_CREDENTIALS = {
-    key: '', // place your key here.
-    secret: '' // place your secret here.
+  key: '', // place your key here.
+  secret: '' // place your secret here.
 }
