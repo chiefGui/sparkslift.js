@@ -5,6 +5,9 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+
+// Version 1.0.0
+
 require('sha')
 require('GameLiftCredentials')
 
@@ -22,8 +25,8 @@ function hash (string) {
 
 /**
  * AWS
- * @param - options.service - The requested service
  * @param - options.region - Region of this AWS Service
+ * @param - options.action - The action to request. Ie. CreateGameSession, SearchGameSessions.
  * @param - options.headers - Request headers given in object format {"key": "value"}
  * @param - options.params - Request parameters given in object format {"key": "value"}
  * @param - options.payload - Request payload given in object format {"key": "value"}
@@ -32,7 +35,7 @@ function hash (string) {
 var AWS = function (options) {
   this.method = 'POST'
   this.region = options.region
-  this.service = 'gamelift' || options.service
+  this.service = 'gamelift'
   this.canonicalUri = '/'
   this.date = new Date()
   this.params = options.params || {}
@@ -46,6 +49,8 @@ var AWS = function (options) {
 
   this.headers.Host = this.host // Must be present in headers
   this.headers['X-Amz-Date'] = this.awsDateTimeFormat()
+  this.headers['Content-Type'] = 'application/x-amz-json-1.1'
+  this.headers['X-Amz-Target'] = 'GameLift.' + options.action
 
   var reqHeader = JSON.parse(JSON.stringify(this.headers))
   reqHeader.Authorization = this.getAuthHeader()

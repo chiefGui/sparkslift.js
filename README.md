@@ -1,4 +1,4 @@
-# sparkslift.js
+# sparkslift.js v1.0.0
 
 Easily integrate [Amazon's GameLift](https://aws.amazon.com/gamelift/) with [GameSparks](https://www.gamesparks.com/).
 
@@ -12,16 +12,16 @@ The reason this repository exists is to help people trying to integrate GameLift
 
 ## Preparing the dependencies
 
-*The instructions below assumes that you already have an account both in Amazon's GameLift and GameSparks and have your game server up and running.*
+_The instructions below assumes that you already have an account both in Amazon's GameLift and GameSparks and have your game server up and running._
 
-1. Log in into your account on [GameSpark's portal](https://portal2.gamesparks.net/) and choose the game you want to configure.
-2. Create a module using the shortcode "sha". [🡒 How to create a module](#creating-a-module)
-3. Create a module using the shortcode "aws".
-4. Create a module using the shortcode "GameLiftCredentials".
-5. In the "sha" module, copy and paste [this content](https://raw.githubusercontent.com/chiefGui/sparkslift.js/master/modules/sha.js). Save and close the module.
-6. In the "aws" module, copy and paste [this content](https://raw.githubusercontent.com/chiefGui/sparkslift.js/master/modules/aws.js). Save and close the module.
-7. In the "GameLiftCredentials" module, copy and paste [this content](https://raw.githubusercontent.com/chiefGui/sparkslift.js/master/modules/GameLiftCredentials.js). Now, this step requires more attention. As you might have seen, this module has two (required) empty fields called respectively `key` and `secret`, which are provided by Amazon. If you do have them already, please, paste them within the quotes and you're good to go by saving and closing the module. Otherwise, [refer to Amazon's official documentation on how to get them](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html).
-8. Done.
+1.  Log in into your account on [GameSpark's portal](https://portal2.gamesparks.net/) and choose the game you want to configure.
+2.  Create a module using the shortcode "sha". [🡒 How to create a module](#creating-a-module)
+3.  Create a module using the shortcode "aws".
+4.  Create a module using the shortcode "GameLiftCredentials".
+5.  In the "sha" module, copy and paste [this content](https://raw.githubusercontent.com/chiefGui/sparkslift.js/master/modules/sha.js). Save and close the module.
+6.  In the "aws" module, copy and paste [this content](https://raw.githubusercontent.com/chiefGui/sparkslift.js/master/modules/aws.js). Save and close the module.
+7.  In the "GameLiftCredentials" module, copy and paste [this content](https://raw.githubusercontent.com/chiefGui/sparkslift.js/master/modules/GameLiftCredentials.js). Now, this step requires more attention. As you might have seen, this module has two (required) empty fields called respectively `key` and `secret`, which are provided by Amazon. If you do have them already, please, paste them within the quotes and you're good to go by saving and closing the module. Otherwise, [refer to Amazon's official documentation on how to get them](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html).
+8.  Done.
 
 ## Making your first request to GameLift
 
@@ -29,27 +29,24 @@ If you prepared the dependencies correctly and no errors were shown, probably yo
 
 Access your Cloud Code page again and add a new event script by clicking in the plus sign next to the `Events` folder, which probably is your very first folder available. To exemplify, let's name it `SearchGameSessions`, which, as you can imagine, will search for game sessions using [Amazon's API](https://docs.aws.amazon.com/gamelift/latest/apireference/API_SearchGameSessions.html).
 
-Once your file is created, paste the following code. *Don't forget to place your fleet id inside the quotes of the FLEET_ID variable.*
+Once your file is created, paste the following code. _Don't forget to place your fleet id inside the quotes of the FLEET_ID variable._
 
 ```js
-requireOnce('aws')
+requireOnce("aws");
 
-var FLEET_ID = '' // your fleet id goes here
+var FLEET_ID = ""; // your fleet id goes here
 
-function searchGameSessions (fleetId) {
-    return new AWS({
-        region: 'sa-east-1',
-        headers: {
-            'X-Amz-Target': 'GameLift.SearchGameSessions',
-            'Content-Type': 'application/x-amz-json-1.1'
-        },
-        payload: {
-            FleetId: fleetId
-        }
-    })
+function searchGameSessions(fleetId) {
+  return new AWS({
+    region: "sa-east-1", // feel free to change this value to whatever region you need
+    action: "SearchGameSessions",
+    payload: {
+      FleetId: fleetId
+    }
+  });
 }
 
-Spark.setScriptData('response', searchGameSessions(FLEET_ID))
+Spark.setScriptData("response", searchGameSessions(FLEET_ID));
 ```
 
 Now, save your file and head to the [Test Harness page](https://docs.gamesparks.com/documentation/test-harness/). If you're not authenticated on GameSparks' API yet, please do, otherwise they won't allow you to dispatch external requests. Remember: the calls triggered by GameSparks are on your players behalf. When you try to make a request without being an authenticated player, GameSparks will take action and for security reasons will block you to move further. [↗ All about authentication](https://docs.gamesparks.com/documentation/key-concepts/authentication.html)
@@ -99,7 +96,7 @@ The demonstration above was about `SearchGameSessions` and I understand people m
 
 Regardless of what you want to do, the first required thing is to refer to [GameLift's client API ↗](https://docs.aws.amazon.com/gamelift/latest/apireference/). Search for the action you want--[CreateGameSession ↗](https://docs.aws.amazon.com/gamelift/latest/apireference/API_CreateGameSession.html) for instance,--and give it a read.
 
-Most of the methods will have a similar documentation structure, with similar sections etc, and one of the most important of them is the **Request Parameters**, which shows what the request expects to receive from us as a `payload`. `CreateGameSession`, for example, only have one *required* parameter:
+Most of the methods will have a similar documentation structure, with similar sections etc, and one of the most important of them is the **Request Parameters**, which shows what the request expects to receive from us as a `payload`. `CreateGameSession`, for example, only have one _required_ parameter:
 
 ![](https://i.imgur.com/YPVfVhK.png)
 
@@ -111,41 +108,41 @@ If you say the above thrice out loud, don't worry because the quote will stick t
 
 Ok, moving on. After reading the CreateGameSession documentation, we can conclude that we must inform GameLift two things:
 
-- `FleetId`/`AliasId` and
-- `MaximumPlayerSessionCount`
+* `FleetId`/`AliasId` and
+* `MaximumPlayerSessionCount`
 
 To adapt the code snippet of the demonstration above, just create another event script called `CreateGameSession` using the following code:
 
 ```js
-requireOnce('aws')
+requireOnce("aws");
 
-var FLEET_ID = '' // your fleet id goes here
-var MAXIMUM_PLAYER_SESSION_COUNT = 1 // just a convention, you don't have to create this variable
+var FLEET_ID = ""; // your fleet id goes here
+var MAXIMUM_PLAYER_SESSION_COUNT = 1; // just a convention, you don't have to create this variable
 
-function createGameSession (fleetId, maximumPlayerSessionCount) {
-    return new AWS({
-        region: 'sa-east-1',
-        headers: {
-            'X-Amz-Target': 'GameLift.CreateGameSession',
-            'Content-Type': 'application/x-amz-json-1.1'
-        },
-        payload: {
-            FleetId: fleetId,
-            MaximumPlayerSessionCount: maximumPlayerSessionCount
-        }
-    })
+function createGameSession(fleetId, maximumPlayerSessionCount) {
+  return new AWS({
+    region: "sa-east-1", // feel free to change this value to whatever region you need
+    action: "CreateGameSession",
+    payload: {
+      FleetId: fleetId,
+      MaximumPlayerSessionCount: maximumPlayerSessionCount
+    }
+  });
 }
 
-Spark.setScriptData('response', createGameSession(FLEET_ID, MAXIMUM_PLAYER_SESSION_COUNT))
+Spark.setScriptData(
+  "response",
+  createGameSession(FLEET_ID, MAXIMUM_PLAYER_SESSION_COUNT)
+);
 ```
 
 If you want to zoom in the differences between the two scripts, just open them in two text editors and put one right the other and you'll easily spot what was changed. But look closely because if a simple comma is missing, you might face unexpected behaviors.
 
 ## Troubleshooting
 
-1. Always make sure your `key` and `secret` are up-to-date and functional.
-2. Always make sure the names/shortcodes of your files/events/modules are correct.
-3. Always [make sure you're authenticated as a player on GameSparks ↗](https://docs.gamesparks.com/documentation/key-concepts/authentication.html).
+1.  Always make sure your `key` and `secret` are up-to-date and functional.
+2.  Always make sure the names/shortcodes of your files/events/modules are correct.
+3.  Always [make sure you're authenticated as a player on GameSparks ↗](https://docs.gamesparks.com/documentation/key-concepts/authentication.html).
 
 ## Creating a module
 
