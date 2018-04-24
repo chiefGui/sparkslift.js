@@ -1,0 +1,20 @@
+{
+  "name": "sparkslift",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:chiefGui/sparkslift.js.git",
+  "author": "Guilherme Oderdenge <guilhermeoderdenge@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "prettier": "^1.12.1",
+    "prettier-eslint": "^8.8.1"
+  }
+}

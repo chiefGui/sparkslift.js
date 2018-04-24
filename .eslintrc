@@ -1,0 +1,14 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 5,
+    "sourceType": "module"
+  },
+  "extends": "standard",
+  "globals": {
+    "sha": true,
+    "aws": true,
+    "Spark": true,
+    "GAMELIFT_CREDENTIALS": true,
+    "JSSHA": true
+  }
+}
