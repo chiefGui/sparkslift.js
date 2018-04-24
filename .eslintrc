@@ -7,8 +7,10 @@
   "globals": {
     "sha": true,
     "aws": true,
+    "AWS": true,
     "Spark": true,
     "GAMELIFT_CREDENTIALS": true,
-    "JSSHA": true
+    "JSSHA": true,
+    "requireOnce": true
   }
 }
