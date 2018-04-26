@@ -138,6 +138,47 @@ Spark.setScriptData(
 
 If you want to zoom in the differences between the two scripts, just open them in two text editors and put one right the other and you'll easily spot what was changed. But look closely because if a simple comma is missing, you might face unexpected behaviors.
 
+## Testing against GameLiftLocal
+
+#### Available at: `v1.1.0`
+
+GameSparks integration to GameLift wouldn't be pleasant if we couldn't test against GameLiftLocal. Having to rebuild our game and create a brand new fleet just for debugging purposes is not only exhaustive but time consuming.
+
+Thanks to the GameLiftLocal web server exposal, we can perform HTTP requests via GameSparks to our local machine just like we do against production fleet instances. Amazing, ain't it? And the good news is that is easier than you think.
+
+Briefly, a production request would look like this:
+
+```js
+return new AWS({
+  region: "sa-east-1",
+  action: "CreateGameSession",
+  payload: {
+    FleetId: "fleet-123123123"
+  }
+});
+```
+
+If you want to perform exactly the same request against GameLiftLocal--the one in your machine,--all you have to do is to pass a `local` object containing the `address` and `port` where GameLiftLocal is settled:
+
+```js
+return new AWS({
+  region: "sa-east-1",
+  action: "CreateGameSession",
+  payload: {
+    FleetId: "fleet-123123123"
+  },
+  local: {
+    address: "172.31.255.255", // your (public) IP/domain goes here
+    port: 8080 // the port GameLift is listening to goes here
+  }
+});
+```
+
+Please note that the port GameLiftLocal is listening to **must be** open under the `TCP` protocol in order to make GameSparks perform successful calls.
+
+* Don't have or know your public IP? [Get it here ↗](http://whatismyip.host/)
+* Unsure whether your ports are open or don't know how to do it? [This tutorial may help you ↗](https://www.wikihow.com/Open-Ports)
+
 ## Troubleshooting
 
 1.  Always make sure your `key` and `secret` are up-to-date and functional.
