@@ -1,4 +1,5 @@
-# sparkslift.js v1.0.0
+# sparkslift.js
+#### Current version `v1.1.0`
 
 Easily integrate [Amazon's GameLift](https://aws.amazon.com/gamelift/) with [GameSparks](https://www.gamesparks.com/).
 
