@@ -66,13 +66,20 @@ var AWS = function (options) {
     hasParameters: Object.keys(this.params).length > 0,
     local: local
   })
-  var res = Spark.getHttp(requestURL)
+  var response = Spark.getHttp(requestURL)
     .setHeaders(requestHeaders)
     .postString(this.payload)
 
+  if (response === null) {
+    return {
+      status: 0,
+      json: {}
+    }
+  }
+
   return {
-    status: res.getResponseCode(),
-    json: res.getResponseJson()
+    status: response.getResponseCode(),
+    json: response.getResponseJson()
   }
 }
 
