@@ -90,7 +90,7 @@ var AWS = function (options) {
  * @param {Object} [options.local]
  */
 function getEndpoint (options) {
-  if (options.local) {
+  if (options.local.address) {
     var port = options.local.port || '8080'
 
     return 'http://' + options.local.address + ':' + port
