@@ -48,17 +48,18 @@ var AWS = function (options) {
   this.payload = JSON.stringify(this.payload)
 
   var local = options.local || {}
+  var date = new Date()
 
   this.key = GAMELIFT_CREDENTIALS.key
   this.secret = GAMELIFT_CREDENTIALS.secret
 
   this.headers.Host = getHost(options.region) // Must be present in headers
-  this.headers['X-Amz-Date'] = this.awsDateTimeFormat()
+  this.headers['X-Amz-Date'] = this.awsDateTimeFormat(date)
   this.headers['Content-Type'] = 'application/x-amz-json-1.1'
   this.headers['X-Amz-Target'] = 'GameLift.' + options.action
 
   var requestHeaders = JSON.parse(JSON.stringify(this.headers))
-  requestHeaders.Authorization = this.getAuthHeader()
+  requestHeaders.Authorization = this.getAuthHeader(date)
 
   var requestURL = getRequestURL({
     region: options.region,
@@ -149,39 +150,39 @@ AWS.prototype.getCanonicalQueryString = function () {
     .join('&')
 }
 
-AWS.prototype.getAuthHeader = function () {
+AWS.prototype.getAuthHeader = function (date) {
   return (
     'AWS4-HMAC-SHA256 Credential=' +
     this.key +
     '/' +
-    this.getAwsCredentialScope() +
+    this.getAwsCredentialScope(date) +
     ', SignedHeaders=' +
     this.getAwsSignedHeaders() +
     ', Signature=' +
-    this.getAwsCredentialSignature()
+    this.getAwsCredentialSignature(date)
   )
 }
 
-AWS.prototype.getAwsCredentialSignature = function () {
+AWS.prototype.getAwsCredentialSignature = function (date) {
   return hmac(
-    this.getAwsCredentialSignatureKey(),
+    this.getAwsCredentialSignatureKey(date),
     'HEX',
-    this.getAwsCredentialSignatureValue()
+    this.getAwsCredentialSignatureValue(date)
   )
 }
 
-AWS.prototype.getAwsCredentialSignatureKey = function () {
-  var h1 = hmac('AWS4' + this.secret, 'TEXT', this.awsDateTimeFormatShort())
+AWS.prototype.getAwsCredentialSignatureKey = function (date) {
+  var h1 = hmac('AWS4' + this.secret, 'TEXT', this.awsDateTimeFormatShort(date))
   var h2 = hmac(h1, 'HEX', this.region)
   var h3 = hmac(h2, 'HEX', SERVICE)
   return hmac(h3, 'HEX', 'aws4_request')
 }
 
-AWS.prototype.getAwsCredentialSignatureValue = function () {
+AWS.prototype.getAwsCredentialSignatureValue = function (date) {
   return [
     'AWS4-HMAC-SHA256',
-    this.awsDateTimeFormat(),
-    this.getAwsCredentialScope(),
+    this.awsDateTimeFormat(date),
+    this.getAwsCredentialScope(date),
     hash(this.getCanonicalRequest())
   ].join('\n')
 }
@@ -206,19 +207,19 @@ AWS.prototype.getAwsSignedHeaders = function () {
     .join(';')
 }
 
-AWS.prototype.getAwsCredentialScope = function () {
+AWS.prototype.getAwsCredentialScope = function (date) {
   return [
-    this.awsDateTimeFormatShort(),
+    this.awsDateTimeFormatShort(date),
     this.region,
     SERVICE,
     'aws4_request'
   ].join('/')
 }
 
-AWS.prototype.awsDateTimeFormat = function () {
-  return new Date().toISOString().replace(/[:-]|\.\d{3}/g, '')
+AWS.prototype.awsDateTimeFormat = function (date) {
+  return date.toISOString().replace(/[:-]|\.\d{3}/g, '')
 }
 
-AWS.prototype.awsDateTimeFormatShort = function () {
-  return this.awsDateTimeFormat().substring(0, 8)
+AWS.prototype.awsDateTimeFormatShort = function (date) {
+  return this.awsDateTimeFormat(date).substring(0, 8)
 }
